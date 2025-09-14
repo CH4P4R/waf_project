@@ -147,23 +147,23 @@ def show_menu():
     print("="*60)
 
 def show_attack_types():
-    """Saldırı türlerini göster"""
-    print("\n📋 Mevcut Saldırı Türleri:")
+    """Show attack types"""
+    print("\n📋 Available Attack Types:")
     print("-" * 40)
     for i, attack_type in enumerate(TEST_PAYLOADS.keys(), 1):
         print(f"{i:2d}. {attack_type}")
     print("-" * 40)
 
 def test_specific_attack():
-    """Spesifik saldırı türü test et"""
+    """Test specific attack type"""
     show_attack_types()
     try:
-        choice = int(input("\n🎯 Hangi saldırı türünü test etmek istiyorsun? (1-10): "))
+        choice = int(input("\n🎯 Which attack type do you want to test? (1-10): "))
         attack_types = list(TEST_PAYLOADS.keys())
         
         if 1 <= choice <= len(attack_types):
             attack_type = attack_types[choice - 1]
-            print(f"\n🚨 {attack_type} Saldırı Testleri Başlatılıyor...")
+            print(f"\n🚨 {attack_type} Attack Tests Starting...")
             print("-" * 50)
             
             endpoint = ENDPOINT_MAP.get(attack_type, "/search")

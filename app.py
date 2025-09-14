@@ -417,13 +417,13 @@ class WAFDetector:
         return False, None
 
     def scan_request(self, method, args, form_data, headers, json_data=None):
-        """Gelen isteği tüm saldırı türleri için tara"""
+        """Scan incoming request for all attack types"""
         attacks = []
         
-        # Tüm veri kaynaklarını birleştir
+        # Combine all data sources
         all_data = str(args) + str(form_data) + str(json_data) + str(headers)
         
-        # Çok basit kontrol - sadece gerçek saldırıları tespit et
+        # Very basic check - detect only real attacks
         if '<script' in all_data.lower():
             return [{
                 'type': 'XSS',
@@ -450,7 +450,7 @@ class WAFDetector:
         
         return attacks
 
-# WAF Detector instance'ı - ARTIK KULLANILMIYOR
+# WAF Detector instance - NO LONGER USED
 # waf_detector = WAFDetector()
 
 def log_attack(ip, endpoint, attack_type, payload, user_agent):
@@ -495,7 +495,7 @@ def analyze_request():
         # Tüm veri kaynaklarını birleştir
         all_data = str(args) + str(form_data) + str(json_data) + str(headers)
         
-        # WAF kontrolü - ÇALIŞAN VERSİYON
+        # WAF checkü - ÇALIŞAN VERSİYON
         
         # TÜM VERİYİ BİRLEŞTİR
         data_str = str(all_data)
@@ -503,87 +503,87 @@ def analyze_request():
         # 1. Sensitive Data - DOĞRU PATTERN
         if "'password'" in data_str and 'secret123' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'Sensitive_Data', 'Sensitive data detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 Sensitive Data saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 Sensitive Data attack detected! IP: {request.remote_addr}")
             return
         if "'api_key'" in data_str and 'sk_live_123' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'Sensitive_Data', 'Sensitive data detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 Sensitive Data saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 Sensitive Data attack detected! IP: {request.remote_addr}")
             return
             
         # 2. Security Misconfig - DOĞRU PATTERN
         if "'debug'" in data_str and 'true' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'Security_Misconfig', 'Security misconfiguration detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 Security Misconfiguration saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 Security Misconfiguration attack detected! IP: {request.remote_addr}")
             return
         if "'test'" in data_str and 'true' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'Security_Misconfig', 'Security misconfiguration detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 Security Misconfiguration saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 Security Misconfiguration attack detected! IP: {request.remote_addr}")
             return
             
         # 3. LFI vs Directory Traversal AYIRIMI
         if '/file' in request.path and "'path'" in data_str and '../../../etc/passwd' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'LFI', 'Local file inclusion detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 LFI saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 LFI attack detected! IP: {request.remote_addr}")
             return
         if '/traverse' in request.path and "'path'" in data_str and '../../../etc/passwd' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'Directory_Traversal', 'Directory traversal detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 Directory Traversal saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 Directory Traversal attack detected! IP: {request.remote_addr}")
             return
             
         # 4. LDAP Injection - DOĞRU PATTERN
         if "'user'" in data_str and 'admin)(' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'LDAP_Injection', 'LDAP injection detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 LDAP Injection saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 LDAP Injection attack detected! IP: {request.remote_addr}")
             return
         if "'(password'" in data_str and '*' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'LDAP_Injection', 'LDAP injection detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 LDAP Injection saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 LDAP Injection attack detected! IP: {request.remote_addr}")
             return
             
         # 5. CSRF - PATH KONTROLÜ
         if '/csrf-test' in request.path:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'CSRF', 'CSRF attack detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 CSRF saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 CSRF attack detected! IP: {request.remote_addr}")
             return
         
         # 6. XSS
         if '<script' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'XSS', 'XSS attack detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 XSS saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 XSS attack detected! IP: {request.remote_addr}")
             return
         
         # 6. SQLi  
         if "' OR '1'='1" in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'SQLi', 'SQL injection detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 SQLi saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 SQLi attack detected! IP: {request.remote_addr}")
             return
         
         # 7. RCE
         if 'cat /etc/passwd' in data_str or 'ls;' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'RCE', 'RCE attack detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 RCE saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 RCE attack detected! IP: {request.remote_addr}")
             return
         
         # 8. LFI
         if 'etc/passwd' in data_str and '..' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'LFI', 'LFI attack detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 LFI saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 LFI attack detected! IP: {request.remote_addr}")
             return
         
         # 9. CSRF
         if method == 'POST' and 'Referer' not in headers:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'CSRF', 'CSRF detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 CSRF saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 CSRF attack detected! IP: {request.remote_addr}")
             return
         
         # 10. IDOR
         if '/user/' in request.path and '/profile' in request.path:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'IDOR', 'IDOR detected', request.headers.get('User-Agent', 'Unknown'))
-            logger.warning(f"🚨 IDOR saldırısı tespit edildi! IP: {request.remote_addr}")
+            logger.warning(f"🚨 IDOR attack detected! IP: {request.remote_addr}")
             return
             
     except Exception as e:
-        logger.error(f"WAF analizi sırasında hata: {e}")
+        logger.error(f"WAF analysis sırasında hata: {e}")
 
 @app.route('/')
 def index():
@@ -961,30 +961,30 @@ IDOR: /user/123/profile
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    """Arama endpoint'i - test için"""
+    """Search endpoint - for testing"""
     if request.method == 'POST':
         query = request.form.get('search', '')
     else:
         query = request.args.get('q', '')
     
-    # WAF kontrolü @app.before_request tarafından yapılıyor
+    # WAF checkü @app.before_request tarafından yapılıyor
     
     return jsonify({
-        "message": "Arama yapıldı",
+        "message": "Search completed",
         "query": query,
         "results": []
     })
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Login endpoint'i - test için"""
-    # WAF kontrolü @app.before_request tarafından yapılıyor
+    """Login endpoint - for testing"""
+    # WAF checkü @app.before_request tarafından yapılıyor
     
     if request.method == 'POST':
         username = request.form.get('username', '')
         password = request.form.get('password', '')
         return jsonify({
-            "message": "Login denemesi",
+            "message": "Login attempt",
             "username": username,
             "status": "success"
         })
@@ -998,18 +998,18 @@ def login():
 
 @app.route('/admin')
 def admin():
-    """Admin endpoint'i - test için"""
+    """Admin endpoint - for testing"""
     return jsonify({
-        "message": "Admin paneli",
+        "message": "Admin panel",
         "status": "accessible"
     })
 
 @app.route('/file')
 def file_access():
-    """Dosya erişim endpoint'i - test için"""
+    """File access endpoint - for testing"""
     path = request.args.get('path', '')
     return jsonify({
-        "message": "Dosya erişim denemesi",
+        "message": "File access attempt",
         "path": path,
         "status": "blocked"
     })
@@ -1017,7 +1017,7 @@ def file_access():
 @app.route('/api')
 def api():
     """Sensitive Data test endpoint'i"""
-    # WAF kontrolü @app.before_request tarafından yapılıyor
+    # WAF checkü @app.before_request tarafından yapılıyor
     
     password = request.args.get('password', '')
     api_key = request.args.get('api_key', '')
@@ -1030,19 +1030,19 @@ def api():
 
 @app.route('/api/data', methods=['POST'])
 def api_data():
-    """JSON API endpoint'i"""
+    """JSON API endpoint"""
     data = request.get_json() or {}
     return jsonify({"status": "received", "data": data})
 
 @app.route('/config')
 def config():
-    """Konfigürasyon endpoint'i - test için"""
-    # WAF kontrolü @app.before_request tarafından yapılıyor
+    """Configuration endpoint - for testing"""
+    # WAF checkü @app.before_request tarafından yapılıyor
     
     debug = request.args.get('debug', 'false')
     test = request.args.get('test', 'false')
     return jsonify({
-        "message": "Konfigürasyon ayarları",
+        "message": "Configuration settings",
         "debug": debug,
         "test": test,
         "status": "configured"
@@ -1051,11 +1051,11 @@ def config():
 @app.route('/csrf-test', methods=['GET', 'POST'])
 def csrf_test():
     """CSRF test endpoint'i"""
-    # WAF kontrolü @app.before_request tarafından yapılıyor
+    # WAF checkü @app.before_request tarafından yapılıyor
     
     if request.method == 'POST':
         return jsonify({
-            "message": "CSRF test başarılı",
+            "message": "CSRF test successful",
             "method": "POST",
             "status": "vulnerable"
         })
@@ -1063,7 +1063,7 @@ def csrf_test():
     return """
     <form method="POST">
         <h3>CSRF Test Formu</h3>
-        <p>Bu form CSRF saldırısı testi için tasarlanmıştır.</p>
+        <p>This form is designed for CSRF attack testing.</p>
         <input type="submit" value="CSRF Test">
     </form>
     """
@@ -1080,7 +1080,7 @@ def traverse():
 
 @app.route('/ldap')
 def ldap():
-    """LDAP Injection test endpoint'i"""
+    """LDAP Injection test endpoint"""
     user = request.args.get('user', '')
     return jsonify({
         "message": "LDAP Injection test",
@@ -1090,11 +1090,11 @@ def ldap():
 
 @app.route('/user/<int:user_id>/profile')
 def user_profile(user_id):
-    """IDOR test endpoint'i"""
-    # WAF kontrolü @app.before_request tarafından yapılıyor
+    """IDOR test endpoint"""
+    # WAF checkü @app.before_request tarafından yapılıyor
     
     return jsonify({
-        "message": "Kullanıcı profili",
+        "message": "User profile",
         "user_id": user_id,
         "status": "accessible"
     })
@@ -1110,19 +1110,19 @@ def health():
 
 @app.route('/dashboard')
 def dashboard():
-    """Grafana dashboard'una yönlendir"""
+    """Grafana dashboard'una redirect"""
     return redirect('http://localhost:3000/d/smartwaf-attacks-top10/smartwaf-t-pot-attacks-dashboard')
 
 @app.route('/grafana')
 def grafana():
-    """Grafana ana sayfasına yönlendir"""
+    """Grafana ana sayfasına redirect"""
     return redirect('http://localhost:3000')
 
 @app.route('/stats')
 def stats():
-    """Saldırı istatistikleri"""
+    """Saldırı statistics"""
     try:
-        # Son 24 saatin saldırılarını getir
+        # Son 24 saatin attacksnı getir
         result = supabase.table("attacks")\
             .select("attack_type, COUNT(*)")\
             .gte("timestamp", (datetime.now(timezone.utc) - timedelta(days=1)).isoformat())\
@@ -1131,18 +1131,18 @@ def stats():
         return jsonify({"stats": result.data})
         
     except Exception as e:
-        logger.error(f"Stats hatası: {e}")
+        logger.error(f"Stats error: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    logger.info("🛡️ SmartWAF başlatılıyor...")
+    logger.info("🛡️ SmartWAF starting...")
     logger.info(f"Supabase URL: {SUPABASE_URL}")
-    logger.info("🚀 Flask uygulaması başlatıldı!")
+    logger.info("🚀 Flask uygulaması started!")
     logger.info("📊 Dashboard: http://localhost:5000/dashboard")
     logger.info("🔍 Test: http://localhost:5000")
     
     # Flask uygulamasını başlat
-    print("🌐 Web sunucusu başlatılıyor...")
+    print("🌐 Web server starting...")
     print("📱 Tarayıcınızda http://localhost:5000 adresine gidin")
     
     # Flask uyarılarını sustur
