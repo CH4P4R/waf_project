@@ -1,0 +1,1105 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#2E8B57"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2E8B57",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) as total_attacks FROM attacks",
+          "refId": "A"
+        }
+      ],
+      "title": "SmartWAF - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#1E90FF"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#1E90FF",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as xss_attacks FROM attacks WHERE attack_type IN ('XSS', 'xss')",
+          "refId": "A"
+        }
+      ],
+      "title": "XSS - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#8A2BE2"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#8A2BE2",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as sqli_attacks FROM attacks WHERE attack_type IN ('SQLi', 'sqli')",
+          "refId": "A"
+        }
+      ],
+      "title": "SQLi - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#FF8C00"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF8C00",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as rce_attacks FROM attacks WHERE attack_type IN ('RCE', 'rce')",
+          "refId": "A"
+        }
+      ],
+      "title": "RCE - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#DC143C"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#DC143C",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as lfi_attacks FROM attacks WHERE attack_type IN ('LFI', 'lfi')",
+          "refId": "A"
+        }
+      ],
+      "title": "LFI - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#FFD700"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FFD700",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as csrf_attacks FROM attacks WHERE attack_type IN ('CSRF', 'csrf')",
+          "refId": "A"
+        }
+      ],
+      "title": "CSRF - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#9370DB"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#9370DB",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 4
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as idor_attacks FROM attacks WHERE attack_type IN ('IDOR', 'idor')",
+          "refId": "A"
+        }
+      ],
+      "title": "IDOR - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#32CD32"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#32CD32",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 4
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as directory_traversal FROM attacks WHERE attack_type IN ('Directory_Traversal', 'directory_traversal', 'Directory Traversal')",
+          "refId": "A"
+        }
+      ],
+      "title": "Directory Traversal - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#FF1493"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF1493",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 4
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as ldap_injection FROM attacks WHERE attack_type IN ('LDAP_Injection', 'ldap_injection', 'LDAP Injection')",
+          "refId": "A"
+        }
+      ],
+      "title": "LDAP Injection - Attacks",
+      "type": "stat"
+    },
+
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#FF69B4"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF69B4",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 4
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as sensitive_data FROM attacks WHERE attack_type IN ('Sensitive_Data', 'sensitive_data', 'Sensitive Data Exposure')",
+          "refId": "A"
+        }
+      ],
+      "title": "Sensitive Data - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#F0E68C"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#F0E68C",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 4
+      },
+      "id": 12,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 32
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+           "rawSql": "SELECT COUNT(*) as security_misconfig FROM attacks WHERE attack_type IN ('Security_Misconfig', 'security_misconfig', 'Security Misconfig', 'Security Misconfiguration')",
+          "refId": "A"
+        }
+      ],
+      "title": "Security Misconfig - Attacks",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours'\nGROUP BY DATE_TRUNC('hour', timestamp)\nORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "SmartWAF Attacks Bar",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "fieldDisplay": "auto",
+        "legendDisplayMode": "visible"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'XSS' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('XSS', 'xss')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'SQLi' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('SQLi', 'sqli')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'RCE' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('RCE', 'rce')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'LFI' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('LFI', 'lfi')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'CSRF' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('CSRF', 'csrf')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'IDOR' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('IDOR', 'idor')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'Directory_Traversal' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('Directory_Traversal', 'directory_traversal')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'LDAP_Injection' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('LDAP_Injection', 'ldap_injection')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'Sensitive_Data' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('Sensitive_Data', 'sensitive_data')\nGROUP BY DATE_TRUNC('hour', timestamp)\nUNION ALL\nSELECT\n  DATE_TRUNC('hour', timestamp) as time,\n  'Security_Misconfig' as series,\n  COUNT(*) as attacks\nFROM attacks\nWHERE timestamp >= NOW() - INTERVAL '24 hours' AND attack_type IN ('Security_Misconfig', 'security_misconfig')\nGROUP BY DATE_TRUNC('hour', timestamp)\nORDER BY time, series",
+          "refId": "A"
+        }
+      ],
+      "title": "SmartWAF Attacks Histogram",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 8,
+        "y": 17
+      },
+      "id": 15,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": true,
+              "style": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "opacity": 0.4,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 5,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "Layer 1",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "zero",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 1
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ip,\n  COUNT(*) as attacks,\n  40.7128 as latitude,\n  -74.0060 as longitude\nFROM attacks\nWHERE ip IS NOT NULL\nGROUP BY ip\nORDER BY attacks DESC\nLIMIT 100",
+          "refId": "A"
+        }
+      ],
+      "title": "SmartWAF Attack Map",
+      "type": "geomap"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "supabase"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 16,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "attack_count"
+          }
+        ]
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "supabase"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \n    ip,\n    COUNT(*) as attack_count,\n    attack_type\nFROM attacks \nGROUP BY ip, attack_type\nORDER BY attack_count DESC\nLIMIT 20",
+          "refId": "A"
+        }
+      ],
+      "title": "IP Addresses by Country",
+      "type": "table"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["security", "waf", "attacks"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "SmartWAF - Security Dashboard",
+  "uid": "smartwaf-dashboard",
+  "version": 1,
+  "weekStart": ""
+}
