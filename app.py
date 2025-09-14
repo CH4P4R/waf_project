@@ -122,15 +122,15 @@ class WAFDetector:
     def __init__(self):
         # XSS Patterns - More specific and secure
         self.xss_patterns = [
-            r'<script[^>]*>.*?</script>',  # Tam script tag'i
+            r'<script[^>]*>.*?</script>',  # Complete script tag
             r'<script[^>]*>',  # Open script tag
             r'javascript:',  # javascript: protocol
             r'onerror\s*=',  # onerror event
             r'onload\s*=',  # onload event
             r'onclick\s*=',  # onclick event
-            r'<img[^>]*onerror',  # img tag'inde onerror
-            r'<iframe[^>]*src',  # iframe tag'inde src
-            r'eval\s*\(',  # eval fonksiyonu
+            r'<img[^>]*onerror',  # onerror in img tag
+            r'<iframe[^>]*src',  # src in iframe tag
+            r'eval\s*\(',  # eval function
             r'document\.cookie',  # cookie access
             r'window\.location'  # location access
         ]
@@ -166,7 +166,7 @@ class WAFDetector:
             # Hex values
             r"0x[0-9a-f]+",
             
-            # SQL injection karakterleri
+            # SQL injection characters
             r"'\s*or\s*'x'='x",
             r"'\s*or\s*1=1--",
             r"'\s*or\s*1=1#",
@@ -175,9 +175,9 @@ class WAFDetector:
         
         # Remote Code Execution Patterns - To avoid confusion with LFI
         self.rce_patterns = [
-            r';\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Komut zincirleri
-            r'&&\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Komut zincirleri
-            r'\|\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Komut zincirleri
+            r';\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Command chains
+            r'&&\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Command chains
+            r'\|\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Command chains
             r'`[^`]+`',  # Backtick commands
             r'\$\([^)]+\)',  # Subshell commands
             r'curl\s+[^\s&]+',  # Network commands
@@ -277,7 +277,7 @@ class WAFDetector:
             r'patient_id\s*=\s*\d+',
             r'student_id\s*=\s*\d+',
             r'employee_id\s*=\s*\d+',
-            # URL path pattern'leri
+            # URL path patterns
             r'/user/\d+/profile',
             r'/admin/\d+',
             r'/order/\d+',
@@ -495,7 +495,7 @@ def analyze_request():
         # Combine all data sources
         all_data = str(args) + str(form_data) + str(json_data) + str(headers)
         
-        # WAF checkü - WORKING VERSION
+        # WAF check - WORKING VERSION
         
         # COMBINE ALL DATA
         data_str = str(all_data)
@@ -894,7 +894,7 @@ def index():
                 </div>
                 <div class="endpoint">
                     <strong>CSRF ATTACK</strong>
-                    <a href="/csrf-test">/csrf-test</a> (POST ile test edin)
+                    <a href="/csrf-test">/csrf-test</a> (Test with POST)
                 </div>
                 <div class="endpoint">
                     <strong>DIRECTORY TRAVERSAL</strong>
@@ -921,7 +921,7 @@ LFI: /file?path=../../../etc/passwd
 
 Sensitive Data: /api?password=secret123&api_key=sk_live_123
 Security Misconfig: /config?debug=true&test=true
-CSRF: POST /csrf-test (Referer header yok)
+CSRF: POST /csrf-test (No Referer header)
 Directory Traversal: /traverse?path=../../../etc/passwd
 LDAP Injection: /ldap?user=admin)(&(password=*
 IDOR: /user/123/profile
@@ -967,7 +967,7 @@ def search():
     else:
         query = request.args.get('q', '')
     
-    # WAF checkü @app.before_request tarafından yapılıyor
+    # WAF check is performed by @app.before_request
     
     return jsonify({
         "message": "Search completed",
@@ -978,7 +978,7 @@ def search():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Login endpoint - for testing"""
-    # WAF checkü @app.before_request tarafından yapılıyor
+    # WAF check is performed by @app.before_request
     
     if request.method == 'POST':
         username = request.form.get('username', '')
@@ -1016,8 +1016,8 @@ def file_access():
 
 @app.route('/api')
 def api():
-    """Sensitive Data test endpoint'i"""
-    # WAF checkü @app.before_request tarafından yapılıyor
+    """Sensitive Data test endpoint"""
+    # WAF check is performed by @app.before_request
     
     password = request.args.get('password', '')
     api_key = request.args.get('api_key', '')
@@ -1037,7 +1037,7 @@ def api_data():
 @app.route('/config')
 def config():
     """Configuration endpoint - for testing"""
-    # WAF checkü @app.before_request tarafından yapılıyor
+    # WAF check is performed by @app.before_request
     
     debug = request.args.get('debug', 'false')
     test = request.args.get('test', 'false')
@@ -1050,8 +1050,8 @@ def config():
 
 @app.route('/csrf-test', methods=['GET', 'POST'])
 def csrf_test():
-    """CSRF test endpoint'i"""
-    # WAF checkü @app.before_request tarafından yapılıyor
+    """CSRF test endpoint"""
+    # WAF check is performed by @app.before_request
     
     if request.method == 'POST':
         return jsonify({
@@ -1062,7 +1062,7 @@ def csrf_test():
     
     return """
     <form method="POST">
-        <h3>CSRF Test Formu</h3>
+        <h3>CSRF Test Form</h3>
         <p>This form is designed for CSRF attack testing.</p>
         <input type="submit" value="CSRF Test">
     </form>
@@ -1070,7 +1070,7 @@ def csrf_test():
 
 @app.route('/traverse')
 def traverse():
-    """Directory Traversal test endpoint'i"""
+    """Directory Traversal test endpoint"""
     path = request.args.get('path', '')
     return jsonify({
         "message": "Directory Traversal test",
@@ -1091,7 +1091,7 @@ def ldap():
 @app.route('/user/<int:user_id>/profile')
 def user_profile(user_id):
     """IDOR test endpoint"""
-    # WAF checkü @app.before_request tarafından yapılıyor
+    # WAF check is performed by @app.before_request
     
     return jsonify({
         "message": "User profile",
@@ -1101,7 +1101,7 @@ def user_profile(user_id):
 
 @app.route('/health')
 def health():
-    """Sistem durumu endpoint'i"""
+    """System status endpoint"""
     return jsonify({
         "status": "healthy",
         "waf": "active",
@@ -1110,19 +1110,19 @@ def health():
 
 @app.route('/dashboard')
 def dashboard():
-    """Grafana dashboard'una redirect"""
+    """Redirect to Grafana dashboard"""
     return redirect('http://localhost:3000/d/smartwaf-attacks-top10/smartwaf-t-pot-attacks-dashboard')
 
 @app.route('/grafana')
 def grafana():
-    """Grafana ana sayfasına redirect"""
+    """Redirect to Grafana main page"""
     return redirect('http://localhost:3000')
 
 @app.route('/stats')
 def stats():
-    """Saldırı statistics"""
+    """Attack statistics"""
     try:
-        # Son 24 saatin attacksnı getir
+        # Get attacks from last 24 hours
         result = supabase.table("attacks")\
             .select("attack_type, COUNT(*)")\
             .gte("timestamp", (datetime.now(timezone.utc) - timedelta(days=1)).isoformat())\
@@ -1137,15 +1137,15 @@ def stats():
 if __name__ == '__main__':
     logger.info("🛡️ SmartWAF starting...")
     logger.info(f"Supabase URL: {SUPABASE_URL}")
-    logger.info("🚀 Flask uygulaması started!")
+    logger.info("🚀 Flask application started!")
     logger.info("📊 Dashboard: http://localhost:5000/dashboard")
     logger.info("🔍 Test: http://localhost:5000")
     
-    # Flask uygulamasını başlat
+    # Start Flask application
     print("🌐 Web server starting...")
-    print("📱 Tarayıcınızda http://localhost:5000 adresine gidin")
+    print("📱 Open http://localhost:5000 in your browser")
     
-    # Flask uyarılarını sustur
+    # Suppress Flask warnings
     import logging
     logging.getLogger('werkzeug').setLevel(logging.ERROR)
     
@@ -1153,6 +1153,6 @@ if __name__ == '__main__':
         print("🚀 Flask server starting...")
         app.run(debug=False, host='localhost', port=5000, use_reloader=False)
     except Exception as e:
-        print(f"❌ HATA: {e}")
-        print("🔄 Port 5001 deneniyor...")
+        print(f"❌ ERROR: {e}")
+        print("🔄 Trying port 5001...")
         app.run(debug=False, host='localhost', port=5001, use_reloader=False)
