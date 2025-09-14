@@ -67,17 +67,17 @@ SmartWAF is designed as a comprehensive educational and research tool for web se
 - Filterable tables
 - Interactive charts
 
-## 🏗️ Sistem Mimarisi
+## 🏗️ System Architecture
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │                 │    │                  │    │                 │
 │   Web Client    ├───►│   SmartWAF       ├───►│   Supabase      │
 │                 │    │   (Flask)        │    │ (PostgreSQL DB) │
-│                 │    │  - Saldırı       │    │  - Attacks Log  │
-│                 │    │    Tespiti       │    │  - Real-time    │
+│                 │    │  - Attack        │    │  - Attacks Log  │
+│                 │    │    Detection     │    │  - Real-time    │
 │                 │    │  - Logging       │    │  - Auto Scale   │
-│                 │    │  - GeoIP Tespit  │    │                 │
+│                 │    │  - GeoIP Detect  │    │                 │
 └─────────────────┘    └──────────────────┘    └─────────┬───────┘
                                                            │
                                                            │ Direct
@@ -89,58 +89,58 @@ SmartWAF is designed as a comprehensive educational and research tool for web se
                                                 │  - Real-time     │
                                                 │  - PostgreSQL    │
                                                 │    Native        │
-                                                │  - Ülke Analizi  │
+                                                │  - Country Anal. │
                                                 └──────────────────┘
 ```
 
-### 🔄 **Veri Akışı:**
-1. **Client** → SmartWAF'a HTTP request gönderir
-2. **SmartWAF** → OWASP saldırıları tespit eder
-3. **SmartWAF** → **GeoIP ile ülke tespiti yapar**
-4. **SmartWAF** → Supabase'e saldırı logları yazar
-5. **Grafana** → Supabase'den direkt veri çeker (real-time)
-6. **Dashboard** → Anlık güvenlik görselleştirmesi + **Ülke analizi**
+### 🔄 **Data Flow:**
+1. **Client** → Sends HTTP request to SmartWAF
+2. **SmartWAF** → Detects OWASP attacks
+3. **SmartWAF** → **Performs country detection with GeoIP**
+4. **SmartWAF** → Writes attack logs to Supabase
+5. **Grafana** → Pulls data directly from Supabase (real-time)
+6. **Dashboard** → Real-time security visualization + **Country analysis**
 
-## 📋 Gereksinimler
+## 📋 Requirements
 
-### Sistem Gereksinimleri
+### System Requirements
 - **Python** 3.8+ 
 - **pip** package manager
 - **2GB RAM** (minimum)
-- **1GB Disk** alanı
+- **1GB Disk** space
 
-### Servis Gereksinimleri
-- **Supabase** hesabı (ücretsiz tier yeterli)
-- **Grafana** (ayrı kurulum gerekli)
+### Service Requirements
+- **Supabase** account (free tier sufficient)
+- **Grafana** (separate installation required)
 - **Port 5000** (Flask)
 - **Port 3000** (Grafana)
 
-## 🚀 Kurulum
+## 🚀 Installation
 
-### 1. Python Environment Hazırlama
+### 1. Python Environment Setup
 ```bash
-# Python virtual environment oluştur
+# Create Python virtual environment
 python -m venv smartwaf-env
 
-# Virtual environment'ı aktif et
+# Activate virtual environment
 # Windows:
 smartwaf-env\Scripts\activate
 # Linux/Mac:
 source smartwaf-env/bin/activate
 
-# Bağımlılıkları yükle
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Supabase Kurulumu
+### 2. Supabase Setup
 
-#### a) Supabase Hesabı Oluştur
-1. [supabase.com](https://supabase.com) adresine git
-2. Yeni bir proje oluştur
-3. Proje ayarlarından URL ve API Key'i kopyala
+#### a) Create Supabase Account
+1. Go to [supabase.com](https://supabase.com)
+2. Create a new project
+3. Copy URL and API Key from project settings
 
-#### b) Veritabanı Tablosunu Oluştur
-Supabase SQL Editor'da şu komutu çalıştır:
+#### b) Create Database Table
+Run this command in Supabase SQL Editor:
 
 ```sql
 CREATE TABLE attacks (
@@ -153,129 +153,129 @@ CREATE TABLE attacks (
   user_agent TEXT
 );
 
--- Index'ler (performans için)
+-- Indexes (for performance)
 CREATE INDEX idx_attacks_timestamp ON attacks(timestamp);
 CREATE INDEX idx_attacks_ip ON attacks(ip);
 CREATE INDEX idx_attacks_type ON attacks(attack_type);
 ```
 
-### 3. Environment Konfigürasyonu
+### 3. Environment Configuration
 
 ```bash
-# Windows'da:
+# On Windows:
 copy env.example .env
 
-# Linux/Mac'te:
+# On Linux/Mac:
 cp env.example .env
 
-# .env dosyasını düzenle
+# Edit .env file
 notepad .env  # Windows
 nano .env     # Linux/Mac
 ```
 
-**.env dosyası örneği:**
+**.env file example:**
 ```env
-# Supabase Konfigürasyonu
+# Supabase Configuration
 SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
 SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxxx
 
-# Flask Konfigürasyonu  
+# Flask Configuration  
 FLASK_ENV=production
 FLASK_DEBUG=False
 ```
 
-### 4. Grafana Kurulumu (Windows)
+### 4. Grafana Installation (Windows)
 
 ```bash
-# Grafana'yı indir ve kur
-# https://grafana.com/grafana/download adresinden Windows installer'ı indir
-# Veya Chocolatey ile:
+# Download and install Grafana
+# Download Windows installer from https://grafana.com/grafana/download
+# Or with Chocolatey:
 choco install grafana
 
-# Grafana servisini başlat
+# Start Grafana service
 net start grafana
 ```
 
-### 5. SmartWAF Uygulamasını Başlat
+### 5. Start SmartWAF Application
 
 ```bash
-# Virtual environment aktif olduğundan emin ol
+# Make sure virtual environment is active
 smartwaf-env\Scripts\activate
 
-# Flask uygulamasını başlat
+# Start Flask application
 python app.py
 ```
 
-### 6. Grafana Dashboard Kurulumu
+### 6. Grafana Dashboard Setup
 
-#### a) Grafana'ya Erişim
+#### a) Access Grafana
 - URL: http://localhost:3000
-- Kullanıcı: `admin`
-- Şifre: `admin` (ilk giriş)
+- Username: `admin`
+- Password: `admin` (first login)
 
-#### b) Supabase Data Source Ekle
+#### b) Add Supabase Data Source
 1. **Configuration > Data Sources** 
 2. **Add data source > PostgreSQL**
-3. Ayarları gir:
+3. Enter settings:
    ```
    Name: Supabase
    Host: db.xxxxxxxxxxxxx.supabase.co:5432
    Database: postgres
    User: postgres
-   Password: [Supabase DB şifresi]
+   Password: [Supabase DB password]
    SSL Mode: require
    ```
 
-#### c) Dashboard Import Et
+#### c) Import Dashboard
 1. **+ > Import**
-2. `smartwaf-dashboard.json` dosyasını yükle
-3. Data source olarak **Supabase**'i seç
-4. **Import** tıkla
+2. Upload `smartwaf-dashboard.json` file
+3. Select **Supabase** as data source
+4. Click **Import**
 
-## 📊 Kullanım
+## 📊 Usage
 
-### Temel Kullanım
-SmartWAF otomatik olarak tüm HTTP isteklerini analiz eder. Test için:
+### Basic Usage
+SmartWAF automatically analyzes all HTTP requests. For testing:
 
 ```bash
-# Normal istek
+# Normal request
 curl http://localhost:5000/
 
-# XSS testi
+# XSS test
 curl "http://localhost:5000/search?q=<script>alert('XSS')</script>"
 
-# SQL Injection testi  
+# SQL Injection test  
 curl "http://localhost:5000/login?user=admin&pass=admin' OR '1'='1"
 
-# RCE testi
+# RCE test
 curl "http://localhost:5000/search?cmd=ls; cat /etc/passwd"
 
-# LFI testi
+# LFI test
 curl "http://localhost:5000/file?path=../../../etc/passwd"
 ```
 
-### Dashboard Kullanımı
-- **Real-time monitoring**: 30 saniyede bir güncellenir
-- **Filtreleme**: Tablo sütunlarında filtreleme yapabilirsiniz
-- **Zaman aralığı**: Sağ üstten zaman aralığını değiştirebilirsiniz
-- **Panel detayları**: Panel başlıklarına tıklayarak detaylara erişin
-- **🌍 Ülke analizi**: "IP Addresses by Country" panelinde coğrafi dağılım
+### Dashboard Usage
+- **Real-time monitoring**: Updates every 30 seconds
+- **Filtering**: You can filter in table columns
+- **Time range**: Change time range from top right
+- **Panel details**: Click panel titles to access details
+- **🌍 Country analysis**: Geographic distribution in "IP Addresses by Country" panel
 
-### Test Scripti Kullanımı
+### Test Script Usage
 ```bash
-# Tüm saldırı türlerini test et
+# Test all attack types
 python test_attacks.py
 
-# Manuel test için
+# For manual testing
 curl "http://localhost:5000/search?q=<script>alert('XSS')</script>"
 curl "http://localhost:5000/login?user=admin&pass=admin' OR '1'='1"
 ```
 
-## 🧪 Test Senaryoları
+## 🧪 Test Scenarios
 
-### Manuel Test Payload'ları
+### Manual Test Payloads
 
-#### XSS Testleri
+#### XSS Tests
 ```javascript
 <script>alert('XSS')</script>
 <img src=x onerror=alert('XSS')>
@@ -283,7 +283,7 @@ javascript:alert('XSS')
 <iframe src="javascript:alert('XSS')"></iframe>
 ```
 
-#### SQL Injection Testleri
+#### SQL Injection Tests
 ```sql
 ' OR '1'='1
 ' UNION SELECT null,null,null--
@@ -291,7 +291,7 @@ javascript:alert('XSS')
 ' AND (SELECT SUBSTRING(@@version,1,1))='5'--
 ```
 
-#### RCE Testleri
+#### RCE Tests
 ```bash
 ; ls -la
 && cat /etc/passwd
@@ -300,7 +300,7 @@ javascript:alert('XSS')
 $(uname -a)
 ```
 
-#### LFI Testleri
+#### LFI Tests
 ```
 ../../../etc/passwd
 ..\\..\\..\\windows\\system32\\drivers\\etc\\hosts
@@ -308,79 +308,79 @@ $(uname -a)
 %2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd
 ```
 
-## 📊 Dashboard Panelleri
+## 📊 Dashboard Panels
 
-### 📈 Ana Metrikler
-- **Toplam Saldırı**: Son 24 saatteki toplam saldırı sayısı
-- **Benzersiz IP**: Farklı IP adreslerinden gelen saldırılar
-- **Saldırı Türü**: Tespit edilen farklı saldırı türü sayısı
-- **Saatlik Ortalama**: Ortalama saatlik saldırı oranı
+### 📈 Main Metrics
+- **Total Attacks**: Total number of attacks in the last 24 hours
+- **Unique IPs**: Attacks from different IP addresses
+- **Attack Types**: Number of different attack types detected
+- **Hourly Average**: Average hourly attack rate
 
-### 📊 Görselleştirmeler
-- **Saldırı Türü Dağılımı**: Pie chart ile oransal dağılım
-- **Zaman Çizelgesi**: Saldırıların zamana göre dağılımı
-- **Endpoint Analizi**: En çok hedeflenen endpoint'ler
-- **IP Analizi**: En aktif saldırgan IP'ler
-- **Detaylı Loglar**: Filtrelenebilir saldırı detayları
-- **🌍 Ülke Analizi**: Coğrafi saldırı dağılımı
+### 📊 Visualizations
+- **Attack Type Distribution**: Proportional distribution with pie chart
+- **Timeline**: Time-based distribution of attacks
+- **Endpoint Analysis**: Most targeted endpoints
+- **IP Analysis**: Most active attacker IPs
+- **Detailed Logs**: Filterable attack details
+- **🌍 Country Analysis**: Geographic attack distribution
 
-## 📁 Proje Yapısı
+## 📁 Project Structure
 
 ```
 waf_project/
-├── app.py                    # Ana Flask uygulaması
-├── requirements.txt          # Python bağımlılıkları
-├── test_attacks.py          # Saldırı test scripti
-├── start.ps1                # Windows başlatma scripti
-├── smartwaf-dashboard.json  # Grafana dashboard konfigürasyonu
-├── .env                     # Environment değişkenleri
-├── .gitignore              # Git ignore dosyası
-└── README.md               # Proje dokümantasyonu
+├── app.py                    # Main Flask application
+├── requirements.txt          # Python dependencies
+├── test_attacks.py          # Attack test script
+├── start.ps1                # Windows startup script
+├── smartwaf-dashboard.json  # Grafana dashboard configuration
+├── .env                     # Environment variables
+├── .gitignore              # Git ignore file
+└── README.md               # Project documentation
 ```
 
-## 🔧 Teknik Detaylar
+## 🔧 Technical Details
 
-### Kullanılan Teknolojiler
+### Technologies Used
 - **Backend:** Flask (Python)
-- **Veritabanı:** Supabase (PostgreSQL)
+- **Database:** Supabase (PostgreSQL)
 - **Dashboard:** Grafana
-- **GeoIP:** ip-api.com servisi
+- **GeoIP:** ip-api.com service
 
-### WAF Algoritması
-1. Gelen HTTP isteklerini analiz et
-2. OWASP Top 10 pattern'larını kontrol et
-3. Saldırı tespit edilirse logla
-4. IP adresinden online ülke tespiti yap (ip-api.com)
-5. Veritabanına kaydet
+### WAF Algorithm
+1. Analyze incoming HTTP requests
+2. Check OWASP Top 10 patterns
+3. Log if attack is detected
+4. Perform online country detection from IP address (ip-api.com)
+5. Save to database
 
-## 🔧 Sorun Giderme
+## 🔧 Troubleshooting
 
-### Sık Karşılaşılan Sorunlar
+### Common Issues
 
-#### 1. Supabase Bağlantı Hatası
+#### 1. Supabase Connection Error
 ```
-❌ Veritabanı kayıt hatası: connection error
+❌ Database logging error: connection error
 ```
-**Çözüm**: `.env` dosyasındaki Supabase bilgilerini kontrol edin.
+**Solution**: Check Supabase information in `.env` file.
 
-#### 2. Grafana Dashboard Yüklenmiyor
-**Çözüm**: 
-- Supabase data source'u doğru yapılandırıldığından emin olun
-- Tablo adının `attacks` olduğunu kontrol edin
+#### 2. Grafana Dashboard Not Loading
+**Solution**: 
+- Make sure Supabase data source is configured correctly
+- Verify table name is `attacks`
 
-#### 3. Port Konflikti
+#### 3. Port Conflict
 ```
 Error: [Errno 10048] Only one usage of each socket address
 ```
-**Çözüm**: `app.py`'de port'u değiştirin veya çalışan uygulamayı kapatın.
+**Solution**: Change port in `app.py` or close running application.
 
-#### 4. SSL Certificate Hatası
-**Çözüm**: Supabase bağlantısında `SSL Mode: require` kullanın.
+#### 4. SSL Certificate Error
+**Solution**: Use `SSL Mode: require` in Supabase connection.
 
-### Performans Optimizasyonu
-- PostgreSQL indekslerini kontrol edin
-- Eski logları temizleyin
-- Grafana cache ayarlarını optimize edin
+### Performance Optimization
+- Check PostgreSQL indexes
+- Clean old logs
+- Optimize Grafana cache settings
 
 ## 📚 Learning Objectives
 
@@ -402,7 +402,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 - **Database:** Supabase (PostgreSQL)
 - **Dashboard:** Grafana
 
-## 📚 Referanslar
+## 📚 References
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Flask Documentation](https://flask.palletsprojects.com/)
@@ -410,13 +410,13 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 - [Grafana Documentation](https://grafana.com/docs/)
 - [T-Pot Project](https://github.com/telekom-security/tpotce)
 
-## 🤝 **Katkıda Bulunma**
+## 🤝 **Contributing**
 
-1. Repository'yi fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request açın
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push your branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📊 **Screenshots**
 
@@ -444,16 +444,16 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 - [ ] 📊 Advanced analytics engine
 - [ ] 🔐 Multi-tenant support
 
-## 📄 **Lisans**
+## 📄 **License**
 
-Bu proje [MIT License](LICENSE) altında lisanslanmıştır. Detaylar için LICENSE dosyasına bakın.
+This project is licensed under the [MIT License](LICENSE). See the LICENSE file for details.
 
-## 🙏 **Teşekkürler**
+## 🙏 **Acknowledgments**
 
-- [OWASP](https://owasp.org/) - Güvenlik standartları için
-- [Flask](https://flask.palletsprojects.com/) - Web framework için
-- [Supabase](https://supabase.com/) - Backend servisleri için
-- [Grafana](https://grafana.com/) - Dashboard çözümü için
+- [OWASP](https://owasp.org/) - For security standards
+- [Flask](https://flask.palletsprojects.com/) - For web framework
+- [Supabase](https://supabase.com/) - For backend services
+- [Grafana](https://grafana.com/) - For dashboard solution
 
 ---
 
