@@ -80,3 +80,6 @@ grafana.db
 
 # Supabase local
 .supabase/
+
+# Turkish presentation file (local only)
+SMARTWAF_FINAL_SUNUM.md
