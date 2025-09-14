@@ -485,22 +485,22 @@ def log_attack(ip, endpoint, attack_type, payload, user_agent):
 def analyze_request():
     """Perform WAF analysis before each request - SIMPLE VERSION"""
     try:
-        # İstek verilerini topla
+        # Collect request data
         method = request.method
         args = dict(request.args)
         form_data = dict(request.form)
         headers = dict(request.headers)
         json_data = request.get_json() if request.is_json else None
         
-        # Tüm veri kaynaklarını birleştir
+        # Combine all data sources
         all_data = str(args) + str(form_data) + str(json_data) + str(headers)
         
-        # WAF checkü - ÇALIŞAN VERSİYON
+        # WAF checkü - WORKING VERSION
         
-        # TÜM VERİYİ BİRLEŞTİR
+        # COMBINE ALL DATA
         data_str = str(all_data)
         
-        # 1. Sensitive Data - DOĞRU PATTERN
+        # 1. Sensitive Data - CORRECT PATTERN
         if "'password'" in data_str and 'secret123' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'Sensitive_Data', 'Sensitive data detected', request.headers.get('User-Agent', 'Unknown'))
             logger.warning(f"🚨 Sensitive Data attack detected! IP: {request.remote_addr}")
@@ -510,7 +510,7 @@ def analyze_request():
             logger.warning(f"🚨 Sensitive Data attack detected! IP: {request.remote_addr}")
             return
             
-        # 2. Security Misconfig - DOĞRU PATTERN
+        # 2. Security Misconfig - CORRECT PATTERN
         if "'debug'" in data_str and 'true' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'Security_Misconfig', 'Security misconfiguration detected', request.headers.get('User-Agent', 'Unknown'))
             logger.warning(f"🚨 Security Misconfiguration attack detected! IP: {request.remote_addr}")
@@ -520,7 +520,7 @@ def analyze_request():
             logger.warning(f"🚨 Security Misconfiguration attack detected! IP: {request.remote_addr}")
             return
             
-        # 3. LFI vs Directory Traversal AYIRIMI
+        # 3. LFI vs Directory Traversal DISTINCTION
         if '/file' in request.path and "'path'" in data_str and '../../../etc/passwd' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'LFI', 'Local file inclusion detected', request.headers.get('User-Agent', 'Unknown'))
             logger.warning(f"🚨 LFI attack detected! IP: {request.remote_addr}")
@@ -530,7 +530,7 @@ def analyze_request():
             logger.warning(f"🚨 Directory Traversal attack detected! IP: {request.remote_addr}")
             return
             
-        # 4. LDAP Injection - DOĞRU PATTERN
+        # 4. LDAP Injection - CORRECT PATTERN
         if "'user'" in data_str and 'admin)(' in data_str:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'LDAP_Injection', 'LDAP injection detected', request.headers.get('User-Agent', 'Unknown'))
             logger.warning(f"🚨 LDAP Injection attack detected! IP: {request.remote_addr}")
@@ -540,7 +540,7 @@ def analyze_request():
             logger.warning(f"🚨 LDAP Injection attack detected! IP: {request.remote_addr}")
             return
             
-        # 5. CSRF - PATH KONTROLÜ
+        # 5. CSRF - PATH CHECK
         if '/csrf-test' in request.path:
             log_attack(request.remote_addr, request.endpoint or 'unknown', 'CSRF', 'CSRF attack detected', request.headers.get('User-Agent', 'Unknown'))
             logger.warning(f"🚨 CSRF attack detected! IP: {request.remote_addr}")
@@ -583,7 +583,7 @@ def analyze_request():
             return
             
     except Exception as e:
-        logger.error(f"WAF analysis sırasında hata: {e}")
+        logger.error(f"WAF analysis error during: {e}")
 
 @app.route('/')
 def index():

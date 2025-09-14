@@ -175,11 +175,11 @@ def test_specific_attack():
                 print(f"{status} {payload[:50]}...")
                 time.sleep(0.8)
             
-            print(f"\n✅ {attack_type} testleri tamamlandı!")
+            print(f"\n✅ {attack_type} testleri completed!")
         else:
-            print("❌ Geçersiz seçim!")
+            print("❌ Invalid selection!")
     except ValueError:
-        print("❌ Lütfen geçerli bir sayı girin!")
+        print("❌ Please enter a valid number!")
 
 def test_random_attacks():
     """Rastgele saldırı testleri"""
@@ -189,7 +189,7 @@ def test_random_attacks():
             print("❌ Lütfen 10-50 arası bir sayı girin!")
             return
         
-        print(f"\n🎲 {count} Adet Rastgele Saldırı Testi Başlatılıyor...")
+        print(f"\n🎲 {count} Adet Rastgele Saldırı Testi Starting...")
         print("-" * 50)
         
         for i in range(count):
@@ -204,9 +204,9 @@ def test_random_attacks():
             print(f"{i+1:2d}. {status} {attack_type}: {payload[:30]}...")
             time.sleep(0.3)
         
-        print(f"\n✅ {count} rastgele test tamamlandı!")
+        print(f"\n✅ {count} rastgele test completed!")
     except ValueError:
-        print("❌ Lütfen geçerli bir sayı girin!")
+        print("❌ Please enter a valid number!")
 
 def test_stress():
     """Stress test - çok sayıda saldırı"""
@@ -216,7 +216,7 @@ def test_stress():
             print("❌ Lütfen 100-500 arası bir sayı girin!")
             return
         
-        print(f"\n💥 {count} Adet Stress Test Başlatılıyor...")
+        print(f"\n💥 {count} Adet Stress Test Starting...")
         print("⚠️  Bu işlem zaman alabilir...")
         print("-" * 50)
         
@@ -235,15 +235,15 @@ def test_stress():
                 failed += 1
             
             if i % 10 == 0:  # Her 10 testte rapor
-                print(f"📊 {i+1}/{count} - Başarılı: {successful}, Başarısız: {failed}")
+                print(f"📊 {i+1}/{count} - Successful: {successful}, Failed: {failed}")
             
             time.sleep(0.1)  # Hızlı test
         
-        print(f"\n✅ Stress test tamamlandı!")
-        print(f"📊 Toplam: {count} | Başarılı: {successful} | Başarısız: {failed}")
-        print(f"📈 Başarı oranı: %{(successful/count)*100:.1f}")
+        print(f"\n✅ Stress test completed!")
+        print(f"📊 Total: {count} | Successful: {successful} | Failed: {failed}")
+        print(f"📈 Başarı rate: %{(successful/count)*100:.1f}")
     except ValueError:
-        print("❌ Lütfen geçerli bir sayı girin!")
+        print("❌ Please enter a valid number!")
 
 def test_all_attacks():
     """Tüm OWASP Top 10 saldırılarını test et"""
@@ -272,8 +272,8 @@ def test_all_attacks():
             time.sleep(0.5)
     
     print(f"\n✅ TÜM TESTLER TAMAMLANDI!")
-    print(f"📊 Toplam: {total_tests} | Başarılı: {successful_tests} | Başarısız: {total_tests - successful_tests}")
-    print(f"📈 Başarı oranı: %{(successful_tests/total_tests)*100:.1f}")
+    print(f"📊 Total: {total_tests} | Successful: {successful_tests} | Failed: {total_tests - successful_tests}")
+    print(f"📈 Başarı rate: %{(successful_tests/total_tests)*100:.1f}")
 
 def test_custom_payload():
     """Özel payload test et"""
@@ -303,9 +303,9 @@ def test_custom_payload():
             status = "✅ BAŞARILI" if success else "❌ BAŞARISIZ"
             print(f"{status}")
         else:
-            print("❌ Geçersiz seçim!")
+            print("❌ Invalid selection!")
     except ValueError:
-        print("❌ Lütfen geçerli bir sayı girin!")
+        print("❌ Please enter a valid number!")
 
 def test_multiple_same():
     """Aynı saldırı türünden çoklu test"""
@@ -322,7 +322,7 @@ def test_multiple_same():
                 print("❌ Lütfen 10-100 arası bir sayı girin!")
                 return
             
-            print(f"\n🚨 {attack_type} - {count} Adet Test Başlatılıyor...")
+            print(f"\n🚨 {attack_type} - {count} Adet Test Starting...")
             print("-" * 50)
             
             endpoint = ENDPOINT_MAP.get(attack_type, "/search")
@@ -341,12 +341,12 @@ def test_multiple_same():
                 print(f"{i+1:3d}. {status} {payload[:40]}...")
                 time.sleep(0.2)
             
-            print(f"\n✅ {attack_type} çoklu test tamamlandı!")
-            print(f"📊 Toplam: {count} | Başarılı: {successful} | Başarı oranı: %{(successful/count)*100:.1f}")
+            print(f"\n✅ {attack_type} çoklu test completed!")
+            print(f"📊 Total: {count} | Successful: {successful} | Başarı rate: %{(successful/count)*100:.1f}")
         else:
-            print("❌ Geçersiz seçim!")
+            print("❌ Invalid selection!")
     except ValueError:
-        print("❌ Lütfen geçerli bir sayı girin!")
+        print("❌ Please enter a valid number!")
 
 def main_menu():
     """Ana menü döngüsü"""
@@ -372,7 +372,7 @@ def main_menu():
             elif choice == "6":
                 test_multiple_same()
             else:
-                print("❌ Geçersiz seçim! Lütfen 0-6 arası bir sayı girin.")
+                print("❌ Invalid selection! Lütfen 0-6 arası bir sayı girin.")
             
             input("\n⏸️  Devam etmek için Enter'a basın...")
             
