@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-SmartWAF Test Script - İnteraktif Versiyon
-OWASP Top 10 saldırılarını test etmek için kullanılır
+SmartWAF Test Script - Interactive Version
+Used to test OWASP Top 10 attacks
 """
 
 import requests
@@ -14,7 +14,7 @@ import sys
 # Test hedefi
 BASE_URL = "http://localhost:5000"
 
-# Test payload'ları - OWASP Top 10
+# Test payloads - OWASP Top 10
 TEST_PAYLOADS = {
     "XSS": [
         "<script>alert('XSS')</script>",
@@ -78,7 +78,7 @@ TEST_PAYLOADS = {
 }
 
 def test_attack(attack_type, payload, endpoint="/search"):
-    """Tek bir saldırı testi yap"""
+    """Perform a single attack test"""
     try:
         if endpoint == "/search":
             response = requests.post(
@@ -133,17 +133,17 @@ ENDPOINT_MAP = {
 }
 
 def show_menu():
-    """Ana menüyü göster"""
+    """Show main menu"""
     print("\n" + "="*60)
-    print("🛡️  SMARTWAF TEST MENÜSÜ")
+    print("🛡️  SMARTWAF TEST MENU")
     print("="*60)
-    print("1️⃣  Spesifik saldırı türü seç")
-    print("2️⃣  Rastgele test (10-50 saldırı)")
-    print("3️⃣  Stress test (100+ saldırı)")
-    print("4️⃣  Tüm OWASP Top 10 test et")
-    print("5️⃣  Özel payload test et")
-    print("6️⃣  Tek saldırıdan çoklu test (50 adet)")
-    print("0️⃣  Çıkış")
+    print("1️⃣  Select specific attack type")
+    print("2️⃣  Random test (10-50 attacks)")
+    print("3️⃣  Stress test (100+ attacks)")
+    print("4️⃣  Test all OWASP Top 10")
+    print("5️⃣  Custom payload test")
+    print("6️⃣  Multiple tests from single attack (50 times)")
+    print("0️⃣  Exit")
     print("="*60)
 
 def show_attack_types():

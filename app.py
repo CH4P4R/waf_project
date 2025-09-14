@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 SmartWAF - Web Application Firewall
-OWASP Top 10 Saldırı Tespit Sistemi
+OWASP Top 10 Attack Detection System
 """
 
 import os
@@ -17,25 +17,25 @@ from flask import Flask, request, jsonify, redirect
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
-# GeoIP özelliği aktif
+# GeoIP feature active
 GEOIP_AVAILABLE = True
 
-# Flask uyarılarını kapat
+# Disable Flask warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="werkzeug")
 
-# Environment değişkenlerini yükle
+# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 
-# Logging konfigürasyonu
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# Test için örnek IP'ler (sadece fallback olarak kullanılıyor)
+# Sample IPs for testing (used only as fallback)
 TEST_IPS = {
     'USA': ['104.28.14.9', '192.241.161.58'],
     'Germany': ['138.201.51.76', '116.203.254.107'],
@@ -45,34 +45,34 @@ TEST_IPS = {
 }
 
 def get_random_ip():
-    """Rastgele bir ülkeden IP adresi seç"""
+    """Select a random IP address from a random country"""
     country = random.choice(list(TEST_IPS.keys()))
     ip = random.choice(TEST_IPS[country])
     return ip, country
 
 def get_country_from_ip(ip):
-    """IP adresinden gerçek ülke tespiti yap"""
+    """Perform real country detection from IP address"""
     
-    # Özel IP aralıkları için hızlı kontrol
+    # Quick check for private IP ranges
     if ip == '127.0.0.1':
         return 'Localhost'
     elif ip.startswith('192.168.') or ip.startswith('10.') or ip.startswith('172.16.'):
         return 'Private Network'
     
     try:
-        # Online GeoIP servisi kullan (ücretsiz) - ANA SİSTEM
+        # Use online GeoIP service (free) - MAIN SYSTEM
         import requests
         response = requests.get(f'http://ip-api.com/json/{ip}', timeout=3)
         if response.status_code == 200:
             data = response.json()
             if data.get('status') == 'success':
                 country = data.get('country', 'Unknown')
-                logger.info(f"🌍 IP {ip} -> {country} (Online tespit)")
+                logger.info(f"🌍 IP {ip} -> {country} (Online detection)")
                 return country
     except Exception as e:
-        logger.warning(f"⚠️ Online GeoIP hatası: {e}")
+        logger.warning(f"⚠️ Online GeoIP error: {e}")
     
-    # Online servis çalışmazsa fallback olarak test IP'ler kullan
+    # Use test IPs as fallback if online service fails
     for country, ips in TEST_IPS.items():
         if ip in ips:
             return country
@@ -81,14 +81,14 @@ def get_country_from_ip(ip):
 
 
 
-# Supabase konfigürasyonu - Test modu
+# Supabase configuration - Test mode
 SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://test.supabase.co')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'test-key')
 
-# Test modunda çalış
+# Run in test mode
 if not SUPABASE_URL or not SUPABASE_KEY or 'test' in SUPABASE_URL:
-    logger.warning("⚠️ Supabase konfigürasyonu eksik veya test modunda! Test modunda çalışılıyor.")
-    # Test modunda dummy supabase client oluştur
+    logger.warning("⚠️ Supabase configuration missing or in test mode! Running in test mode.")
+    # Create dummy supabase client in test mode
     class DummySupabase:
         def table(self, name):
             return DummyTable()
@@ -108,42 +108,42 @@ if not SUPABASE_URL or not SUPABASE_KEY or 'test' in SUPABASE_URL:
             self.data = []
     
     supabase = DummySupabase()
-    logger.info("🧪 Test modunda çalışılıyor - Saldırılar loglanmayacak")
+    logger.info("🧪 Running in test mode - Attacks will not be logged")
 else:
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    logger.info("🔗 Supabase bağlantısı kuruldu")
+    logger.info("🔗 Supabase connection established")
 
-# Global DummySupabase referansı (test kontrolü için)
+# Global DummySupabase reference (for test control)
 _DummySupabaseClass = DummySupabase if 'DummySupabase' in locals() else type('DummySupabase', (), {})
 
 class WAFDetector:
-    """OWASP Top 10 Saldırı Tespit Sınıfı"""
+    """OWASP Top 10 Attack Detection Class"""
     
     def __init__(self):
-        # XSS Pattern'leri - Daha spesifik ve güvenli
+        # XSS Patterns - More specific and secure
         self.xss_patterns = [
             r'<script[^>]*>.*?</script>',  # Tam script tag'i
-            r'<script[^>]*>',  # Açık script tag'i
-            r'javascript:',  # javascript: protokolü
+            r'<script[^>]*>',  # Open script tag
+            r'javascript:',  # javascript: protocol
             r'onerror\s*=',  # onerror event
             r'onload\s*=',  # onload event
             r'onclick\s*=',  # onclick event
             r'<img[^>]*onerror',  # img tag'inde onerror
             r'<iframe[^>]*src',  # iframe tag'inde src
             r'eval\s*\(',  # eval fonksiyonu
-            r'document\.cookie',  # cookie erişimi
-            r'window\.location'  # location erişimi
+            r'document\.cookie',  # cookie access
+            r'window\.location'  # location access
         ]
         
-        # SQL Injection Pattern'leri - Daha spesifik ve XSS ile karışmayan
+        # SQL Injection Patterns - More specific and non-overlapping with XSS
         self.sqli_patterns = [
-            # SQL operatörleri
+            # SQL operators
             r"'\s*(or|OR)\s*'1'\s*=\s*'1",
             r"'\s*(or|OR)\s*1\s*=\s*1",
             r"'\s*(and|AND)\s*'1'\s*=\s*'1",
             r"'\s*(and|AND)\s*1\s*=\s*1",
             
-            # SQL komutları
+            # SQL commands
             r"'\s*(union|UNION)\s+(select|SELECT)",
             r"'\s*(union|UNION)\s+all\s+(select|SELECT)",
             r"'\s*(drop|DROP)\s+(table|TABLE)",
@@ -152,18 +152,18 @@ class WAFDetector:
             r"'\s*(update|UPDATE)\s+set",
             r"'\s*(exec|EXEC)\s*\(",
             
-            # SQL fonksiyonları
+            # SQL functions
             r"char\(\d+\)",
             r"sleep\s*\(\d+\)",
             r"benchmark\s*\(",
             r"information_schema",
             
-            # SQL yorumları
+            # SQL comments
             r"'\s*;.*--",
             r"--\s*$",
             r"#\s*$",
             
-            # Hex değerler
+            # Hex values
             r"0x[0-9a-f]+",
             
             # SQL injection karakterleri
@@ -173,29 +173,29 @@ class WAFDetector:
             r"'\s*or\s*1=1/\*"
         ]
         
-        # Remote Code Execution Pattern'leri - LFI ile karışmaması için
+        # Remote Code Execution Patterns - To avoid confusion with LFI
         self.rce_patterns = [
             r';\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Komut zincirleri
             r'&&\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Komut zincirleri
             r'\|\s*(ls|dir|cat|type|rm|cp|mv|chmod|chown)\s+[^\s&]+',  # Komut zincirleri
-            r'`[^`]+`',  # Backtick komutları
-            r'\$\([^)]+\)',  # Subshell komutları
-            r'curl\s+[^\s&]+',  # Network komutları
-            r'wget\s+[^\s&]+',  # Network komutları
-            r'nc\s+-[^\s&]+',  # Network komutları
-            r'netcat\s+[^\s&]+',  # Network komutları
-            r'/bin/(sh|bash|zsh)',  # Shell yolları
-            r'cmd\.exe',  # Windows komutları
-            r'powershell',  # Windows komutları
-            r'system\s*\([^)]*\)',  # PHP fonksiyonları
-            r'exec\s*\([^)]*\)',  # PHP fonksiyonları
-            r'shell_exec\s*\([^)]*\)',  # PHP fonksiyonları
-            r'passthru\s*\([^)]*\)',  # PHP fonksiyonları
-            r'eval\s*\([^)]*\)',  # PHP fonksiyonları
-            r'base64_decode\s*\([^)]*\)'  # PHP fonksiyonları
+            r'`[^`]+`',  # Backtick commands
+            r'\$\([^)]+\)',  # Subshell commands
+            r'curl\s+[^\s&]+',  # Network commands
+            r'wget\s+[^\s&]+',  # Network commands
+            r'nc\s+-[^\s&]+',  # Network commands
+            r'netcat\s+[^\s&]+',  # Network commands
+            r'/bin/(sh|bash|zsh)',  # Shell paths
+            r'cmd\.exe',  # Windows commands
+            r'powershell',  # Windows commands
+            r'system\s*\([^)]*\)',  # PHP functions
+            r'exec\s*\([^)]*\)',  # PHP functions
+            r'shell_exec\s*\([^)]*\)',  # PHP functions
+            r'passthru\s*\([^)]*\)',  # PHP functions
+            r'eval\s*\([^)]*\)',  # PHP functions
+            r'base64_decode\s*\([^)]*\)'  # PHP functions
         ]
         
-        # Local File Inclusion Pattern'leri
+        # Local File Inclusion Patterns
         self.lfi_patterns = [
             r'\.\./\.\./',
             r'\.\.\\\.\.\\',
@@ -214,7 +214,7 @@ class WAFDetector:
             r'c:/boot.ini'
         ]
         
-        # Directory Traversal Pattern'leri
+        # Directory Traversal Patterns
         self.traversal_patterns = [
             r'\.\./',
             r'\.\.\\',
@@ -226,7 +226,7 @@ class WAFDetector:
             r'\.\.\\\.\.\\\.\.\\\.\.\\'
         ]
         
-        # LDAP Injection Pattern'leri
+        # LDAP Injection Patterns
         self.ldap_patterns = [
             r'\*\)',
             r'\(\|',
@@ -246,7 +246,7 @@ class WAFDetector:
             r'\*uid'
         ]
         
-        # CSRF Pattern'leri
+        # CSRF Patterns
         self.csrf_patterns = [
             r'<img[^>]*src\s*=\s*["\']?[^"\'>]*["\']?',
             r'<iframe[^>]*src\s*=\s*["\']?[^"\'>]*["\']?',
@@ -260,7 +260,7 @@ class WAFDetector:
             r'<meta[^>]*http-equiv\s*=\s*["\']?[^"\'>]*["\']?'
         ]
         
-        # IDOR Pattern'leri
+        # IDOR Patterns
         self.idor_patterns = [
             r'id\s*=\s*\d+',
             r'user_id\s*=\s*\d+',
@@ -294,10 +294,10 @@ class WAFDetector:
             r'/employee/\d+'
         ]
         
-        # Broken Authentication Pattern'leri - KALDIRILDI
+        # Broken Authentication Patterns - REMOVED
         self.auth_patterns = []
         
-        # Sensitive Data Exposure Pattern'leri
+        # Sensitive Data Exposure Patterns
         self.sensitive_patterns = [
             r'password\s*=\s*[^\s&]+',
             r'api_key\s*=\s*[^\s&]+',
@@ -316,7 +316,7 @@ class WAFDetector:
             r'authorization\s*=\s*[^\s&]+'
         ]
         
-        # Security Misconfiguration Pattern'leri
+        # Security Misconfiguration Patterns
         self.misconfig_patterns = [
             r'debug\s*=\s*true',
             r'test\s*=\s*true',
@@ -336,49 +336,49 @@ class WAFDetector:
         ]
 
     def detect_xss(self, data):
-        """XSS saldırısı tespit et"""
+        """Detect XSS attack"""
         for pattern in self.xss_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
         return False, None
 
     def detect_sqli(self, data):
-        """SQL Injection saldırısı tespit et"""
+        """Detect SQL Injection attack"""
         for pattern in self.sqli_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
         return False, None
 
     def detect_rce(self, data):
-        """Remote Code Execution saldırısı tespit et"""
+        """Detect Remote Code Execution attack"""
         for pattern in self.rce_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
         return False, None
 
     def detect_lfi(self, data):
-        """Local File Inclusion saldırısı tespit et"""
+        """Detect Local File Inclusion attack"""
         for pattern in self.lfi_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
         return False, None
 
     def detect_directory_traversal(self, data):
-        """Directory Traversal saldırısı tespit et"""
+        """Detect Directory Traversal attack"""
         for pattern in self.traversal_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
         return False, None
 
     def detect_ldap_injection(self, data):
-        """LDAP Injection saldırısı tespit et"""
+        """Detect LDAP Injection attack"""
         for pattern in self.ldap_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
         return False, None
 
     def detect_csrf(self, headers, method):
-        """CSRF saldırısı tespit et (basit referer kontrolü)"""
+        """Detect CSRF attack (simple referer check)"""
         if method in ['POST', 'PUT', 'DELETE']:
             referer = headers.get('Referer')
             if not referer or 'localhost' not in referer:
@@ -386,16 +386,16 @@ class WAFDetector:
         return False, None
 
     def detect_idor(self, data):
-        """IDOR saldırısı tespit et"""
+        """Detect IDOR attack"""
         for pattern in self.idor_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
         return False, None
 
     def detect_broken_auth(self, data):
-        """Broken Authentication saldırısı tespit et"""
+        """Detect Broken Authentication attack"""
         data_str = str(data)
-        # Çok basit kontrol
+        # Very basic check
         if 'user=admin' in data_str and 'password=admin' in data_str:
             return True, 'user=admin&password=admin'
         if 'password=' in data_str:
@@ -403,14 +403,14 @@ class WAFDetector:
         return False, None
 
     def detect_sensitive_data(self, data):
-        """Sensitive Data Exposure saldırısı tespit et"""
+        """Detect Sensitive Data Exposure attack"""
         for pattern in self.sensitive_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
         return False, None
 
     def detect_security_misconfig(self, data):
-        """Security Misconfiguration saldırısı tespit et"""
+        """Detect Security Misconfiguration attack"""
         for pattern in self.misconfig_patterns:
             if re.search(pattern, str(data), re.IGNORECASE):
                 return True, pattern
@@ -454,36 +454,36 @@ class WAFDetector:
 # waf_detector = WAFDetector()
 
 def log_attack(ip, endpoint, attack_type, payload, user_agent):
-    """Saldırıyı Supabase'e logla"""
+    """Log attack to Supabase"""
     try:
-        # Rastgele IP ve ülke seç (Dashboard'da çeşitlilik için)
+        # Select random IP and country (for dashboard variety)
         fake_ip, country = get_random_ip()
         
-        # Gerçek ülke tespiti yap
+        # Perform real country detection
         real_country = get_country_from_ip(fake_ip)
         
         attack_data = {
-            'ip': fake_ip,  # Gerçek IP yerine rastgele IP kullan
+            'ip': fake_ip,  # Use random IP instead of real IP
             'endpoint': endpoint,
             'attack_type': attack_type.lower(),
-            'payload': str(payload)[:500],  # Payload'ı 500 karakterle sınırla
+            'payload': str(payload)[:500],  # Limit payload to 500 characters
             'user_agent': user_agent
         }
         
-        # Test modunda sadece console'a logla
+        # Log to console only in test mode
         if isinstance(supabase, _DummySupabaseClass):
-            logger.info(f"🧪 TEST MODU - Saldırı tespit edildi: {attack_type} - {fake_ip} ({real_country}) - {endpoint}")
+            logger.info(f"🧪 TEST MODE - Attack detected: {attack_type} - {fake_ip} ({real_country}) - {endpoint}")
             logger.info(f"🧪 Payload: {payload}")
         else:
             result = supabase.table('attacks').insert(attack_data).execute()
-            logger.info(f"🚨 Saldırı SUPABASE'e loglandı: {attack_type} - {fake_ip} ({real_country}) - {endpoint}")
+            logger.info(f"🚨 Attack logged to SUPABASE: {attack_type} - {fake_ip} ({real_country}) - {endpoint}")
         
     except Exception as e:
-        logger.error(f"Saldırı loglanırken hata: {e}")
+        logger.error(f"Error logging attack: {e}")
 
 @app.before_request
 def analyze_request():
-    """Her istek öncesi WAF analizi yap - BASİT VERSİYON"""
+    """Perform WAF analysis before each request - SIMPLE VERSION"""
     try:
         # İstek verilerini topla
         method = request.method
@@ -587,7 +587,7 @@ def analyze_request():
 
 @app.route('/')
 def index():
-    """Ana sayfa"""
+    """Main page"""
     return """
     <!DOCTYPE html>
     <html>
